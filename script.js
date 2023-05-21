@@ -1,36 +1,40 @@
-const startButton = document.querySelector('.button')
-const scores = document.querySelector('.score')
+const button = document.querySelector('.button')
+const scoreTable = document.querySelector('.scoreTable')
 const moles = document.querySelectorAll('.mole')
 const holes = document.querySelectorAll('.hole')
 
 let score = 0
 let timeUp = false
 
-const randomTime = (min, max) => {
-  return Math.round(Math.random() * (max - min) + min)
-}
+button.addEventListener('click', () => {
+  score = 0
+  scoreTable.innerHTML = 0
+  timeUp = false
 
-const randomHole = (holes) => {
-  const index = Math.floor(Math.random() * holes.length)
-  const hole = holes[index]
-  return hole
-}
-
-const peep = () => {
-  const time = randomTime(400, 800)
-  const hole = randomHole(holes)
-
-  hole.classList.add('active')
+  peep()
 
   setTimeout(() => {
-    hole.classList.remove('active')
-    !timeUp && peep()
-  }, time)
+    timeUp = true
+  }, 30000)
+})
+
+const randomHole = () => {
+  const index = Math.floor(Math.random() * holes.length)
+  const randomHole = holes[index]
+
+  return randomHole
+}
+
+const randomTime = (min, max) => {
+  return Math.random() * (max - min) + min
 }
 
 const whack = () => {
   score++
-  scores.textContent = score
+  scoreTable.textContent = score
+  holes.forEach((hole) => {
+    hole.classList.remove('active')
+  })
 }
 
 const hide = () => {
@@ -39,21 +43,22 @@ const hide = () => {
   })
 }
 
+const peep = () => {
+  const hole = randomHole()
+  const time = randomTime(300, 600)
+
+  hole.classList.add('active')
+
+  setTimeout(() => {
+    hole.classList.remove('active')
+
+    !timeUp && peep()
+  }, time)
+}
+
 moles.forEach((mole) => {
   mole.addEventListener('click', () => {
     whack()
     hide()
   })
-})
-
-startButton.addEventListener('click', () => {
-  score = 0
-  scores.textContent = 0
-  timeUp = false
-
-  peep()
-
-  setTimeout(() => {
-    timeUp = true
-  }, 15000)
 })
